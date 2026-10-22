@@ -1,0 +1,40 @@
+mes,tipo,causal,n
+2026-04,Desbloqueo,Pago,1160
+2026-05,Desbloqueo,Pago,500
+2026-06,Desbloqueo,Pago,591
+2026-06,Desbloqueo,Prescripción,15
+2026-06,Desbloqueo,Cierre Administrativo,2
+2026-07,Desbloqueo,Pago,32188
+2026-07,Desbloqueo,Prescripción,5024
+2026-07,Desbloqueo,Cierre Administrativo,655
+2026-07,Desbloqueo,Convenio,647
+2026-08,Desbloqueo,Pago,4977
+2026-08,Desbloqueo,Cierre Administrativo,105
+2026-08,Desbloqueo,Prescripción,30
+2026-08,Desbloqueo,Convenio,11
+2026-09,Desbloqueo,Pago,1872
+2026-09,Desbloqueo,Cierre Administrativo,139
+2026-09,Desbloqueo,Ajustes,1
+2026-09,Desbloqueo,Prescripción,1
+2026-10,Desbloqueo,Pago,1042
+2026-10,Desbloqueo,Cierre Administrativo,133
+2026-10,Desbloqueo,Ajustes,1
+2026-01,Desembargo,Pago,1
+2026-02,Desembargo,Pago,1
+2026-04,Desembargo,Pago,172
+2026-04,Desembargo,Prescripción,8
+2026-05,Desembargo,Pago,74
+2026-05,Desembargo,Prescripción,2
+2026-05,Desembargo,Por Error,1
+2026-06,Desembargo,Pago,54
+2026-06,Desembargo,Prescripción,2
+2026-06,Desembargo,Por Error,1
+2026-07,Desembargo,Pago,200
+2026-07,Desembargo,Cierre Administrativo,36
+2026-07,Desembargo,Por Error,13
+2026-07,Desembargo,Prescripción,4
+2026-08,Desembargo,Pago,63
+2026-09,Desembargo,Pago,16
+2026-09,Desembargo,Cierre Administrativo,2
+2026-10,Desembargo,Pago,10
+2026-10,Desembargo,Cierre Administrativo,1
