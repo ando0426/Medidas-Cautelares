@@ -79,6 +79,15 @@ body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-
 .kpi .val { font-family: var(--serif); font-size: 34px; font-weight: 600; line-height: 1.15; margin-top: 6px; font-variant-numeric: tabular-nums; }
 .kpi .sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
 .k1 { --accent: var(--c1); } .k2 { --accent: var(--c2); }
+.kpis.pers { grid-template-columns: repeat(auto-fit, minmax(min(100%, 170px), 1fr)); gap: 12px; margin-top: 4px; }
+.kpis.pers .kpi { padding: 4px 0 4px 14px; }
+.kpis.pers .kpi .val { font-size: 30px; }
+.kpis.pers .kpi .val.money { font-size: 24px; line-height: 1.5; white-space: nowrap; }
+.split { display: flex; height: 12px; border-radius: 999px; overflow: hidden; background: var(--grid); margin-top: 18px; gap: 2px; }
+.split i { display: block; height: 100%; width: 0; transition: width .8s ease; }
+.split i:first-child { background: var(--c1); }
+.split i:last-child { background: var(--c2); }
+.legend b { color: var(--ink); font-weight: 600; margin-left: 4px; }
 
 h2.sec { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 12px 0 0; }
 .card h3 { font-size: 16px; font-weight: 600; margin: 0; }
@@ -230,6 +239,21 @@ footer a { color: inherit; }
     </section>
   </div>
 
+  <section class="card" id="personas-bloqueo">
+    <h3>Personas con bloqueo activo</h3>
+    <p class="note">Los mismos bloqueos vigentes, contados por contribuyente (tipo y número de documento) en lugar de por medida. Una persona puede tener varias medidas y varias placas.</p>
+    <div class="kpis pers">
+      <div class="kpi" style="--accent: var(--c1)"><div class="lbl">Personas bloqueadas</div><div class="val skel" id="pb-tot">000.000</div><div class="sub">Con al menos un bloqueo vigente</div></div>
+      <div class="kpi" style="--accent: var(--c1)"><div class="lbl">Persona natural</div><div class="val skel" id="pb-nat">000.000</div><div class="sub" id="pb-nat-s">Documento distinto a NIT</div></div>
+      <div class="kpi" style="--accent: var(--c2)"><div class="lbl">Persona jurídica</div><div class="val skel" id="pb-jur">0.000</div><div class="sub" id="pb-jur-s">Identificadas con NIT</div></div>
+      <div class="kpi" style="--accent: var(--c1)"><div class="lbl">Placas bloqueadas</div><div class="val skel" id="pb-pla">000.000</div><div class="sub">Vehículos en los bloqueos vigentes</div></div>
+      <div class="kpi" style="--accent: var(--c2)"><div class="lbl">Deuda de las personas bloqueadas</div><div class="val money skel" id="pb-deu">$000 mil M</div><div class="sub" id="pb-deu-s">Capital + intereses, valor base*</div></div>
+    </div>
+    <div class="split" aria-hidden="true"><i id="pb-bar-nat"></i><i id="pb-bar-jur"></i></div>
+    <div class="legend" style="margin-top:8px"><span><i style="background:var(--c1)"></i>Natural <b id="pb-pct-nat">—</b></span><span><i style="background:var(--c2)"></i>Jurídica <b id="pb-pct-jur">—</b></span></div>
+    <p class="note" style="margin:6px 0 0">* La deuda es capital (impuesto, sanción e interés) más intereses, sin descuentos; el valor de la medida con que se registró el bloqueo suele ser el doble. El tipo de persona se asigna por el documento (NIT = jurídica), porque el campo no está diligenciado en TAXATION SMART. Si una medida tiene varios propietarios, cuenta para cada uno.</p>
+  </section>
+
   <h2 class="sec" id="levantamientos">Levantamientos</h2>
   <section class="card">
     <div class="head-row">
@@ -294,7 +318,7 @@ footer a { color: inherit; }
 
 <footer>
   <span id="pie">Datos agregados. Se actualizan automáticamente cada día.</span>
-  <span>Archivos de datos: <a href="data/levantamientos_diarios.csv">diario</a> · <a href="data/levantamientos_causal_mes.csv">causales</a> · <a href="data/estado_medidas.csv">estados</a></span>
+  <span>Archivos de datos: <a href="data/levantamientos_diarios.csv">diario</a> · <a href="data/levantamientos_causal_mes.csv">causales</a> · <a href="data/estado_medidas.csv">estados</a> · <a href="data/personas_bloqueo.csv">personas</a></span>
 </footer>
 
 <script>
@@ -340,8 +364,10 @@ footer a { color: inherit; }
     d3.csv('data/levantamientos_diarios.csv' + v),
     d3.csv('data/levantamientos_causal_mes.csv' + v),
     d3.csv('data/estado_medidas.csv' + v),
-    d3.json('data/corte.json' + v).catch(() => null)
-  ]).then(([diario, causal, estado, corte]) => {
+    d3.json('data/corte.json' + v).catch(() => null),
+    d3.csv('data/personas_bloqueo.csv' + v).catch(() => [])
+  ]).then(([diario, causal, estado, corte, personas]) => {
+    S.personas = personas.map((r) => ({ tipo: r.tipo, personas: +r.personas || 0, placas: +r.placas || 0, capital: +r.capital || 0, intereses: +r.intereses || 0 }));
     S.diario = diario.map((r) => ({ dia: String(r.dia).slice(0, 10), desbloqueos: +r.desbloqueos || 0, desembargos: +r.desembargos || 0 }))
       .sort((a, b) => a.dia.localeCompare(b.dia));
     S.causal = causal.map((r) => ({ mes: String(r.mes).slice(0, 7), tipo: r.tipo, causal: r.causal, n: +r.n || 0 }));
@@ -423,8 +449,36 @@ footer a { color: inherit; }
       tr.append(td0, td1, td2, td3); tbE.appendChild(tr);
     });
 
+    renderPersonas();
     redraw();
     renderDia();
+  }
+
+  // ---------- Personas con bloqueo activo ----------
+  function renderPersonas() {
+    const P = S.personas || [];
+    const sec = document.getElementById('personas-bloqueo');
+    if (!P.length) { sec.style.display = 'none'; return; }
+    const g = (t) => P.find((r) => r.tipo === t) || { personas: 0, placas: 0, capital: 0, intereses: 0 };
+    const nat = g('Natural'), jur = g('Jurídica');
+    const tot = { personas: d3.sum(P, (r) => r.personas), placas: d3.sum(P, (r) => r.placas), deuda: d3.sum(P, (r) => r.capital + r.intereses) };
+    const cap = d3.sum(P, (r) => r.capital), intr = d3.sum(P, (r) => r.intereses);
+    const pn = nat.personas / (tot.personas || 1), pj = jur.personas / (tot.personas || 1);
+    setV('pb-tot', fN(tot.personas));
+    setV('pb-nat', fN(nat.personas));
+    setV('pb-jur', fN(jur.personas));
+    setV('pb-pla', fN(tot.placas));
+    setV('pb-deu', fCopCorto(tot.deuda));
+    document.getElementById('pb-deu').title = fCop(tot.deuda);
+    document.getElementById('pb-deu-s').textContent = 'Capital ' + fCopCorto(cap) + ' + intereses ' + fCopCorto(intr) + '*';
+    document.getElementById('pb-nat-s').textContent = pf.format(pn) + ' · ' + fN(nat.placas) + ' placas';
+    document.getElementById('pb-jur-s').textContent = pf.format(pj) + ' · ' + fN(jur.placas) + ' placas';
+    document.getElementById('pb-pct-nat').textContent = pf.format(pn);
+    document.getElementById('pb-pct-jur').textContent = pf.format(pj);
+    requestAnimationFrame(() => {
+      document.getElementById('pb-bar-nat').style.width = (pn * 100) + '%';
+      document.getElementById('pb-bar-jur').style.width = (pj * 100) + '%';
+    });
   }
 
   function redraw() {
