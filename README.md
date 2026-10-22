@@ -10,6 +10,7 @@ data/
   levantamientos_diarios.csv        ← desbloqueos y desembargos por día
   levantamientos_causal_mes.csv     ← levantamientos por mes y causal
   estado_medidas.csv                ← medidas en cartera según su estado actual
+  personas_bloqueo.csv              ← contribuyentes con bloqueo vigente, por tipo de persona
   corte.json                        ← fecha y hora del último corte
 ```
 
@@ -22,6 +23,7 @@ El dashboard **no tiene cifras escritas dentro**: cada vez que alguien lo abre, 
 | `levantamientos_diarios.csv` | `dia` (AAAA-MM-DD), `desbloqueos`, `desembargos` |
 | `levantamientos_causal_mes.csv` | `mes` (AAAA-MM), `tipo` (Desbloqueo / Desembargo), `causal`, `n` |
 | `estado_medidas.csv` | `cod` (B, E, G, D, F, I), `estado`, `medidas`, `valor` |
+| `personas_bloqueo.csv` | `tipo` (Natural / Jurídica), `personas`, `placas`, `capital`, `intereses` |
 
 Los indicadores dependen de estos códigos de estado: `B` bloqueo, `E` embargo, `G` desbloqueo, `D` desembargo.
 
@@ -56,4 +58,4 @@ y abre `http://localhost:8000`.
 
 ## Actualización diaria
 
-Una tarea programada de Claude consulta Oracle GENESYS cada mañana, regenera los tres CSV y `corte.json`, y hace commit a este repositorio. GitHub Pages vuelve a publicar solo.
+Una tarea programada de Claude consulta TAXATION SMART cada mañana, regenera los cuatro CSV y `corte.json`, y hace commit a este repositorio. GitHub Pages vuelve a publicar solo.
