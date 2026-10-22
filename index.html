@@ -1,0 +1,575 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Medidas cautelares 2026</title>
+<meta name="description" content="Tablero de medidas cautelares vigentes y levantamientos (desbloqueos y desembargos) 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+/* Paleta institucional Gobernación de Antioquia
+   Verde principal #0B5640 (RGB 11, 86, 64) · Gris de texto #575756
+   Dorado de acento tomado del escudo para la segunda serie */
+:root {
+  --bg: #f3f6f4;
+  --panel: #ffffff;
+  --ink: #1d2a24;
+  --muted: #575756;
+  --line: #dfe6e2;
+  --grid: #edf2ef;
+  --brand: #0b5640;
+  --brand-ink: #ffffff;
+  --c1: #0b5640;      /* desbloqueos: verde institucional */
+  --c1-soft: #dcebe5;
+  --c2: #c98a04;      /* desembargos: dorado del escudo */
+  --c2-soft: #f8ecc9;
+  --c2-ink: #8a5d00;
+  --ok: #0b5640;
+  --shadow: 0 1px 2px rgba(11,86,64,.05), 0 4px 16px rgba(11,86,64,.06);
+  --r: 14px;
+  --sans: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "Source Serif 4", Georgia, serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c1411; --panel: #131e1a; --ink: #e7efeb; --muted: #a3b2ab; --line: #24342d; --grid: #1a2722;
+    --brand: #0b5640; --c1: #3fae86; --c1-soft: #173a2e; --c2: #f0b93a; --c2-soft: #3a2d10; --c2-ink: #f0b93a; --ok: #3fae86;
+    --shadow: none;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c1411; --panel: #131e1a; --ink: #e7efeb; --muted: #a3b2ab; --line: #24342d; --grid: #1a2722;
+  --brand: #0b5640; --c1: #3fae86; --c1-soft: #173a2e; --c2: #f0b93a; --c2-soft: #3a2d10; --c2-ink: #f0b93a; --ok: #3fae86;
+  --shadow: none;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+
+/* Encabezado */
+.inst { background: #ffffff; border-bottom: 4px solid #0b5640; }
+.inst-in { max-width: 1240px; margin: 0 auto; padding: 12px 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.inst img { height: 78px; width: auto; display: block; }
+.inst .tag { font-size: 12.5px; color: #575756; text-align: right; line-height: 1.35; }
+.inst .tag b { color: #0b5640; font-weight: 600; display: block; }
+.top { background: var(--brand); color: var(--brand-ink); background-image: linear-gradient(120deg, #0b5640 0%, #0d6a4e 60%, #0b5640 100%); }
+.top-in { max-width: 1240px; margin: 0 auto; padding: 28px 24px 84px; display: flex; gap: 16px; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; }
+.eyebrow { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .7; font-weight: 600; }
+.top h1 { font-family: var(--serif); font-weight: 600; font-size: clamp(26px, 4vw, 38px); line-height: 1.15; margin: 6px 0 8px; }
+.meta { display: flex; gap: 8px 18px; flex-wrap: wrap; font-size: 13px; opacity: .85; }
+.meta span::before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #4ade80; margin-right: 7px; vertical-align: middle; }
+.meta span + span::before { background: rgba(255,255,255,.5); }
+.actions { display: flex; gap: 8px; }
+.btn { font: inherit; font-size: 13px; color: inherit; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.22); border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.btn:hover { background: rgba(255,255,255,.18); }
+
+.wrap { max-width: 1240px; margin: -60px auto 0; padding: 0 24px 48px; display: flex; flex-direction: column; gap: 20px; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); padding: 22px; min-width: 0; }
+.lead { font-size: 16px; color: var(--muted); }
+.lead b { color: var(--ink); font-weight: 600; }
+
+/* KPIs */
+.kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 16px; }
+.kpi { position: relative; overflow: hidden; }
+.kpi::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--accent, var(--line)); }
+.kpi .lbl { font-size: 13px; color: var(--muted); font-weight: 500; }
+.kpi .val { font-family: var(--serif); font-size: 34px; font-weight: 600; line-height: 1.15; margin-top: 6px; font-variant-numeric: tabular-nums; }
+.kpi .sub { font-size: 12.5px; color: var(--muted); margin-top: 4px; }
+.k1 { --accent: var(--c1); } .k2 { --accent: var(--c2); }
+
+h2.sec { font-family: var(--serif); font-weight: 600; font-size: 22px; margin: 12px 0 0; }
+.card h3 { font-size: 16px; font-weight: 600; margin: 0; }
+.note { font-size: 13px; color: var(--muted); margin: 4px 0 14px; }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 460px), 1fr)); gap: 20px; }
+.head-row { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+
+/* Avance */
+.prog { margin-top: 14px; }
+.prog-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 6px; }
+.prog-row b { font-variant-numeric: tabular-nums; }
+.bar { height: 10px; background: var(--grid); border-radius: 999px; overflow: hidden; }
+.bar > i { display: block; height: 100%; border-radius: 999px; background: var(--fill, var(--c1)); width: 0; transition: width .8s ease; }
+
+/* Controles segmentados */
+.seg { display: inline-flex; background: var(--grid); border-radius: 10px; padding: 3px; gap: 2px; }
+.seg button { font: inherit; font-size: 12.5px; border: 0; background: transparent; color: var(--muted); padding: 5px 11px; border-radius: 8px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--panel); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,.08); }
+.ctrls { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; overflow: visible; }
+.chart text { font-family: var(--sans); fill: var(--muted); font-size: 11.5px; }
+.tip { position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; box-shadow: 0 6px 20px rgba(0,0,0,.12); padding: 7px 10px; font-size: 12.5px; white-space: nowrap; display: none; z-index: 5; }
+.tip .d { color: var(--muted); font-size: 11.5px; }
+.legend { display: flex; gap: 14px; font-size: 12.5px; color: var(--muted); margin-bottom: 8px; flex-wrap: wrap; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+
+/* Tablas */
+.tbl-wrap { max-height: 440px; overflow: auto; border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; font-size: 13.5px; font-variant-numeric: tabular-nums; }
+th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: right; }
+th:first-child, td:first-child { text-align: left; }
+tbody tr:last-child td { border-bottom: 0; }
+tbody tr:hover { background: var(--grid); }
+th { position: sticky; top: 0; background: var(--panel); color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .04em; z-index: 1; }
+th button { all: unset; cursor: pointer; }
+th button::after { content: " ↕"; opacity: .4; }
+th[aria-sort="ascending"] button::after { content: " ↑"; opacity: 1; }
+th[aria-sort="descending"] button::after { content: " ↓"; opacity: 1; }
+td .mini { display: inline-block; height: 6px; border-radius: 3px; vertical-align: middle; margin-right: 8px; background: var(--c1); }
+.search { font: inherit; font-size: 13.5px; width: min(100%, 280px); padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--ink); }
+.pill { display: inline-block; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 999px; }
+.pill.on { background: var(--c2-soft); color: var(--c2-ink); }
+.pill.off { background: var(--c1-soft); color: var(--c1); }
+.pill.n { background: var(--grid); color: var(--muted); }
+
+.err { padding: 18px; border-radius: var(--r); background: var(--c2-soft); color: var(--c2); font-size: 14px; display: none; }
+footer { max-width: 1240px; margin: 0 auto; padding: 0 24px 40px; font-size: 12.5px; color: var(--muted); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+footer a { color: inherit; }
+.skel { color: transparent !important; background: linear-gradient(90deg, var(--grid), var(--line), var(--grid)); background-size: 200% 100%; animation: sh 1.2s infinite; border-radius: 6px; }
+@keyframes sh { to { background-position: -200% 0; } }
+
+@media (max-width: 560px) {
+  .inst-in { padding: 10px 16px; }
+  .inst img { height: 46px; }
+  .inst .tag { font-size: 11px; }
+  .top-in { padding: 22px 16px 76px; }
+  .wrap { padding: 0 16px 36px; }
+  footer { padding: 0 16px 32px; }
+  .card { padding: 18px; }
+  .kpi .val { font-size: 28px; }
+}
+@media print {
+  body { background: #fff; }
+  .actions, .search, .ctrls { display: none !important; }
+  .card { box-shadow: none; break-inside: avoid; }
+  .tbl-wrap { max-height: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="inst">
+  <div class="inst-in">
+    <img src="assets/logo-gobernacion.png" alt="Gobernación de Antioquia · República de Colombia">
+    <div class="tag"><b>Informe de gestión</b>Medidas cautelares · Cobro coactivo</div>
+  </div>
+</div>
+
+<header class="top">
+  <div class="top-in">
+    <div>
+      <div class="eyebrow">Tablero de seguimiento · 2026</div>
+      <h1>Medidas cautelares: vigentes y levantamientos</h1>
+      <div class="meta"><span id="corte">Cargando corte…</span><span id="fuente">Fuente: —</span></div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="tema" type="button">Tema</button>
+      <button class="btn" type="button" onclick="window.print()">Imprimir / PDF</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="err" id="error"></div>
+
+  <section class="card lead" id="resumen">
+    <span class="skel">Cargando resumen del periodo con los datos más recientes…</span>
+  </section>
+
+  <section class="kpis" id="indicadores">
+    <div class="card kpi k1"><div class="lbl">Desbloqueos · acumulado</div><div class="val skel" id="k-dsb">000.000</div><div class="sub" id="k-dsb-s">&nbsp;</div></div>
+    <div class="card kpi k2"><div class="lbl">Desembargos · acumulado</div><div class="val skel" id="k-dsm">000</div><div class="sub" id="k-dsm-s">&nbsp;</div></div>
+    <div class="card kpi k1"><div class="lbl">Desbloqueos · último día</div><div class="val skel" id="k-hoy-dsb">00</div><div class="sub" id="k-hoy">&nbsp;</div></div>
+    <div class="card kpi k2"><div class="lbl">Desembargos · último día</div><div class="val skel" id="k-hoy-dsm">0</div><div class="sub" id="k-hoy2">&nbsp;</div></div>
+    <div class="card kpi k1"><div class="lbl">Desbloqueos · promedio diario</div><div class="val skel" id="k-prom">00</div><div class="sub">Últimos 30 días con registro</div></div>
+  </section>
+
+  <h2 class="sec" id="vigentes">Medidas vigentes</h2>
+  <div class="grid2">
+    <section class="card">
+      <h3>Lo que sigue activo</h3>
+      <p class="note">Medidas cuyo estado actual en cartera sigue siendo bloqueo o embargo.</p>
+      <div class="kpis" style="grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));">
+        <div class="kpi" style="padding-left:14px"><div class="lbl">Bloqueos activos</div><div class="val skel" id="v-b">000.000</div><div class="sub" id="v-b-s">&nbsp;</div></div>
+        <div class="kpi" style="padding-left:14px; --accent: var(--c2)"><div class="lbl">Embargos activos</div><div class="val skel" id="v-e">0.000</div><div class="sub" id="v-e-s">&nbsp;</div></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><span>Bloqueos ya levantados</span><b id="p-b">—</b></div>
+        <div class="bar"><i id="p-b-bar" style="--fill: var(--c1)"></i></div>
+      </div>
+      <div class="prog">
+        <div class="prog-row"><span>Embargos ya levantados</span><b id="p-e">—</b></div>
+        <div class="bar"><i id="p-e-bar" style="--fill: var(--c2)"></i></div>
+      </div>
+    </section>
+    <section class="card">
+      <h3>Medidas por estado actual</h3>
+      <p class="note">Cada medida cautelar financiera según su estado hoy, con el valor de la medida.</p>
+      <div class="tbl-wrap" style="max-height:none">
+        <table>
+          <thead><tr><th>Estado</th><th>Medidas</th><th>Participación</th><th>Valor</th></tr></thead>
+          <tbody id="tb-estado"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <h2 class="sec" id="levantamientos">Levantamientos</h2>
+  <section class="card">
+    <div class="head-row">
+      <div>
+        <h3 id="t-diario">Desbloqueos por día</h3>
+        <p class="note">Por fecha de registro. Los picos de julio corresponden a cargues masivos de depuración.</p>
+      </div>
+      <div class="ctrls">
+        <div class="seg" id="seg-serie" role="group" aria-label="Serie">
+          <button type="button" data-v="desbloqueos" aria-pressed="true">Desbloqueos</button>
+          <button type="button" data-v="desembargos" aria-pressed="false">Desembargos</button>
+        </div>
+        <div class="seg" id="seg-rango" role="group" aria-label="Periodo">
+          <button type="button" data-v="0" aria-pressed="true">Todo</button>
+          <button type="button" data-v="90" aria-pressed="false">90 días</button>
+          <button type="button" data-v="30" aria-pressed="false">30 días</button>
+        </div>
+      </div>
+    </div>
+    <div class="chart" id="ch-diario" style="height:300px"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="card">
+      <h3>Por mes</h3>
+      <p class="note">Total registrado en cada mes. Cada serie tiene su propia escala.</p>
+      <div class="legend"><span><i style="background:var(--c1)"></i>Desbloqueos</span><span><i style="background:var(--c2)"></i>Desembargos</span></div>
+      <div class="chart" id="ch-mes-dsb" style="height:170px"></div>
+      <div class="chart" id="ch-mes-dsm" style="height:170px; margin-top:8px"></div>
+    </section>
+    <section class="card">
+      <h3>Por causal</h3>
+      <p class="note">Motivo del levantamiento, acumulado del año.</p>
+      <div class="seg" id="seg-causal" role="group" aria-label="Tipo" style="margin-bottom:12px">
+        <button type="button" data-v="Desbloqueo" aria-pressed="true">Desbloqueos</button>
+        <button type="button" data-v="Desembargo" aria-pressed="false">Desembargos</button>
+      </div>
+      <div class="chart" id="ch-causal"></div>
+    </section>
+  </div>
+
+  <section class="card" id="detalle">
+    <div class="head-row">
+      <div>
+        <h3>Detalle diario</h3>
+        <p class="note">Todos los días con al menos un registro. Clic en los encabezados para ordenar.</p>
+      </div>
+      <input class="search" id="buscar" type="search" placeholder="Buscar fecha (ej. 2026-07 o jul)">
+    </div>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr>
+          <th data-k="dia" aria-sort="descending"><button type="button">Fecha</button></th>
+          <th data-k="desbloqueos" aria-sort="none"><button type="button">Desbloqueos</button></th>
+          <th data-k="desembargos" aria-sort="none"><button type="button">Desembargos</button></th>
+        </tr></thead>
+        <tbody id="tb-dia"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span id="pie">Datos agregados. Se actualizan automáticamente cada día.</span>
+  <span>Archivos de datos: <a href="data/levantamientos_diarios.csv">diario</a> · <a href="data/levantamientos_causal_mes.csv">causales</a> · <a href="data/estado_medidas.csv">estados</a></span>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- Tema claro / oscuro ----------
+  const root = document.documentElement;
+  try { const t = localStorage.getItem('tema'); if (t) root.dataset.theme = t; } catch (e) {}
+  document.getElementById('tema').addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('tema', root.dataset.theme); } catch (e) {}
+    redraw();
+  });
+
+  // ---------- Formatos (es-CO) ----------
+  const nf = new Intl.NumberFormat('es-CO');
+  const pf = new Intl.NumberFormat('es-CO', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const fN = (v) => nf.format(v);
+  const fCop = (v) => '$' + nf.format(Math.round(v));
+  const fCopCorto = (v) => {
+    if (v >= 1e12) return '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 2 }).format(v / 1e12) + ' billones';
+    if (v >= 1e9) return '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(v / 1e9) + ' mil millones';
+    if (v >= 1e6) return '$' + new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(v / 1e6) + ' millones';
+    return fCop(v);
+  };
+  const MES = ['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+  const MESL = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const fDia = (s) => { const [y, m, d] = s.split('-'); return `${+d} ${MES[+m - 1]} ${y}`; };
+  const fDiaL = (s) => { const [y, m, d] = s.split('-'); return `${+d} de ${MESL[+m - 1]} de ${y}`; };
+  const fMes = (s) => { const [y, m] = s.split('-'); return `${MES[+m - 1]} ${y}`; };
+  const css = (n) => getComputedStyle(root).getPropertyValue(n).trim();
+
+  const setV = (id, txt) => { const el = document.getElementById(id); el.classList.remove('skel'); el.textContent = txt; };
+
+  // ---------- Estado ----------
+  const S = { diario: [], causal: [], estado: [], corte: null, serie: 'desbloqueos', rango: 0, tipoCausal: 'Desbloqueo', sortK: 'dia', sortDir: -1 };
+
+  // Evita la caché del navegador para ver siempre los datos del día
+  const v = '?v=' + Date.now();
+  Promise.all([
+    d3.csv('data/levantamientos_diarios.csv' + v),
+    d3.csv('data/levantamientos_causal_mes.csv' + v),
+    d3.csv('data/estado_medidas.csv' + v),
+    d3.json('data/corte.json' + v).catch(() => null)
+  ]).then(([diario, causal, estado, corte]) => {
+    S.diario = diario.map((r) => ({ dia: String(r.dia).slice(0, 10), desbloqueos: +r.desbloqueos || 0, desembargos: +r.desembargos || 0 }))
+      .sort((a, b) => a.dia.localeCompare(b.dia));
+    S.causal = causal.map((r) => ({ mes: String(r.mes).slice(0, 7), tipo: r.tipo, causal: r.causal, n: +r.n || 0 }));
+    S.estado = estado.map((r) => ({ cod: r.cod, estado: r.estado, medidas: +r.medidas || 0, valor: +r.valor || 0 }));
+    S.corte = corte;
+    render();
+  }).catch((e) => {
+    const el = document.getElementById('error');
+    el.style.display = 'block';
+    el.textContent = 'No se pudieron cargar los datos. Si abriste el archivo con doble clic, sírvelo con un servidor web (ver README). Detalle: ' + e.message;
+  });
+
+  // ---------- Render general ----------
+  function render() {
+    const D = S.diario;
+    const tot = { dsb: d3.sum(D, (r) => r.desbloqueos), dsm: d3.sum(D, (r) => r.desembargos) };
+    const ultimo = D[D.length - 1];
+    const primeroDsb = D.find((r) => r.desbloqueos > 0), primeroDsm = D.find((r) => r.desembargos > 0);
+    const u30 = D.slice(-30);
+    const prom = Math.round(d3.mean(u30, (r) => r.desbloqueos) || 0);
+    const est = (c) => S.estado.find((r) => r.cod === c) || { medidas: 0, valor: 0 };
+    const B = est('B'), E = est('E'), G = est('G'), Dd = est('D');
+    const pB = G.medidas / ((G.medidas + B.medidas) || 1), pE = Dd.medidas / ((Dd.medidas + E.medidas) || 1);
+
+    // Corte
+    let corteTxt = ultimo ? 'Corte: ' + fDiaL(ultimo.dia) : 'Sin datos';
+    if (S.corte && S.corte.corte) {
+      const dt = new Date(S.corte.corte);
+      corteTxt = 'Corte: ' + dt.toLocaleString('es-CO', { day: 'numeric', month: 'long', year: 'numeric', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+    }
+    document.getElementById('corte').textContent = corteTxt;
+    document.getElementById('fuente').textContent = 'Fuente: ' + ((S.corte && S.corte.fuente) || '—');
+
+    // Mes pico
+    const porMes = d3.rollups(D, (v) => d3.sum(v, (r) => r.desbloqueos), (r) => r.dia.slice(0, 7));
+    const pico = porMes.reduce((a, b) => (b[1] > a[1] ? b : a), ['', 0]);
+
+    // Resumen
+    const res = document.getElementById('resumen');
+    res.textContent = '';
+    const add = (t, b) => { const n = b ? document.createElement('b') : document.createTextNode(t); if (b) n.textContent = t; res.appendChild(n); };
+    add('Al ' + (ultimo ? fDiaL(ultimo.dia) : '—') + ' se han registrado '); add(fN(tot.dsb), 1); add(' desbloqueos y '); add(fN(tot.dsm), 1);
+    add(' desembargos en el año. Siguen vigentes '); add(fN(B.medidas), 1); add(' bloqueos y '); add(fN(E.medidas), 1);
+    add(' embargos. El mes con más levantamientos fue '); add(pico[0] ? MESL[+pico[0].slice(5, 7) - 1] : '—', 1);
+    add(' (' + fN(pico[1]) + ' desbloqueos), y en los últimos 30 días con registro el ritmo promedio es de ');
+    add(fN(prom), 1); add(' desbloqueos diarios.');
+
+    // KPIs
+    setV('k-dsb', fN(tot.dsb)); document.getElementById('k-dsb-s').textContent = primeroDsb ? 'Desde ' + fDia(primeroDsb.dia) : '';
+    setV('k-dsm', fN(tot.dsm)); document.getElementById('k-dsm-s').textContent = primeroDsm ? 'Desde ' + fDia(primeroDsm.dia) : '';
+    setV('k-hoy-dsb', ultimo ? fN(ultimo.desbloqueos) : '—');
+    setV('k-hoy-dsm', ultimo ? fN(ultimo.desembargos) : '—');
+    document.getElementById('k-hoy').textContent = ultimo ? fDia(ultimo.dia) : '';
+    document.getElementById('k-hoy2').textContent = ultimo ? fDia(ultimo.dia) : '';
+    setV('k-prom', fN(prom));
+
+    // Vigentes
+    setV('v-b', fN(B.medidas)); document.getElementById('v-b-s').textContent = 'Por ' + fCopCorto(B.valor);
+    setV('v-e', fN(E.medidas)); document.getElementById('v-e-s').textContent = 'Por ' + fCopCorto(E.valor);
+    document.getElementById('p-b').textContent = pf.format(pB) + ' · ' + fN(G.medidas) + ' de ' + fN(G.medidas + B.medidas);
+    document.getElementById('p-e').textContent = pf.format(pE) + ' · ' + fN(Dd.medidas) + ' de ' + fN(Dd.medidas + E.medidas);
+    requestAnimationFrame(() => {
+      document.getElementById('p-b-bar').style.width = (pB * 100) + '%';
+      document.getElementById('p-e-bar').style.width = (pE * 100) + '%';
+    });
+
+    // Tabla por estado
+    const totMed = d3.sum(S.estado, (r) => r.medidas) || 1;
+    const tbE = document.getElementById('tb-estado'); tbE.textContent = '';
+    S.estado.slice().sort((a, b) => b.medidas - a.medidas).forEach((r) => {
+      const tr = document.createElement('tr');
+      const td0 = document.createElement('td');
+      const pill = document.createElement('span');
+      pill.className = 'pill ' + (r.cod === 'B' || r.cod === 'E' ? 'on' : (r.cod === 'G' || r.cod === 'D' ? 'off' : 'n'));
+      pill.textContent = r.estado; td0.appendChild(pill);
+      const td1 = document.createElement('td'); td1.textContent = fN(r.medidas);
+      const td2 = document.createElement('td'); td2.textContent = pf.format(r.medidas / totMed);
+      const td3 = document.createElement('td'); td3.textContent = fCopCorto(r.valor); td3.title = fCop(r.valor);
+      tr.append(td0, td1, td2, td3); tbE.appendChild(tr);
+    });
+
+    redraw();
+    renderDia();
+  }
+
+  function redraw() {
+    if (!S.diario.length) return;
+    drawDiario();
+    drawMes('ch-mes-dsb', 'desbloqueos', css('--c1'));
+    drawMes('ch-mes-dsm', 'desembargos', css('--c2'));
+    drawCausal();
+  }
+
+  // ---------- Tooltip ----------
+  function tooltip(el) {
+    let t = el.querySelector('.tip');
+    if (!t) { t = document.createElement('div'); t.className = 'tip'; el.appendChild(t); }
+    return {
+      show(lines, x, y) {
+        t.textContent = '';
+        lines.forEach((l, i) => { const d = document.createElement('div'); if (i === 0) d.className = 'd'; d.textContent = l; t.appendChild(d); });
+        t.style.display = 'block';
+        const w = t.offsetWidth, W = el.clientWidth;
+        t.style.left = Math.min(Math.max(0, x - w / 2), W - w) + 'px';
+        t.style.top = Math.max(0, y - t.offsetHeight - 10) + 'px';
+      },
+      hide() { t.style.display = 'none'; }
+    };
+  }
+
+  function axisStyle(g) {
+    g.select('.domain').attr('stroke', css('--line'));
+    g.selectAll('.tick line').attr('stroke', css('--line'));
+  }
+
+  // ---------- Gráfico diario ----------
+  function drawDiario() {
+    const el = document.getElementById('ch-diario');
+    el.querySelectorAll('svg').forEach((n) => n.remove());
+    const f = S.serie, color = f === 'desbloqueos' ? css('--c1') : css('--c2');
+    document.getElementById('t-diario').textContent = (f === 'desbloqueos' ? 'Desbloqueos' : 'Desembargos') + ' por día';
+    const parse = d3.utcParse('%Y-%m-%d');
+    let data = S.diario.map((r) => ({ d: parse(r.dia), v: r[f], dia: r.dia }));
+    if (S.rango) {
+      const lim = d3.utcDay.offset(data[data.length - 1].d, -S.rango);
+      data = data.filter((r) => r.d > lim);
+    }
+    const W = Math.max(el.clientWidth, 280), H = el.clientHeight || 300;
+    const m = { t: 12, r: 8, b: 26, l: 8 };
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    const y = d3.scaleLinear([0, d3.max(data, (d) => d.v) || 1], [H - m.b, m.t]).nice();
+    const ya = svg.append('g').call(d3.axisLeft(y).ticks(5).tickFormat(fN).tickSize(0));
+    let ml = 0; ya.selectAll('text').each(function () { ml = Math.max(ml, this.getComputedTextLength()); });
+    ml += 12; ya.attr('transform', `translate(${ml},0)`); ya.select('.domain').remove();
+    svg.insert('g', ':first-child').selectAll('line').data(y.ticks(5)).join('line')
+      .attr('x1', ml + 4).attr('x2', W - m.r).attr('y1', (d) => y(d)).attr('y2', (d) => y(d)).attr('stroke', css('--grid'));
+    const x0 = d3.utcDay.offset(d3.min(data, (d) => d.d), -1), x1 = d3.utcDay.offset(d3.max(data, (d) => d.d), 1);
+    const x = d3.scaleUtc([x0, x1], [ml + 6, W - m.r]);
+    const days = d3.utcDay.count(x0, x1);
+    const bw = Math.max(1.5, Math.min(14, (W - ml) / days * 0.72));
+    const bars = svg.append('g').selectAll('rect').data(data).join('rect')
+      .attr('x', (d) => x(d.d) - bw / 2).attr('width', bw)
+      .attr('y', (d) => y(d.v)).attr('height', (d) => Math.max(0, y(0) - y(d.v)))
+      .attr('rx', Math.min(2, bw / 2)).attr('fill', color);
+    const tickEvery = days > 200 ? d3.utcMonth.every(W < 560 ? 2 : 1) : days > 60 ? d3.utcMonth.every(1) : d3.utcWeek.every(W < 560 ? 2 : 1);
+    const xa = svg.append('g').attr('transform', `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).ticks(tickEvery).tickFormat((d) => days > 60 ? MES[d.getUTCMonth()] : d.getUTCDate() + ' ' + MES[d.getUTCMonth()]).tickSizeOuter(0));
+    axisStyle(xa);
+    const tip = tooltip(el);
+    svg.on('pointermove', (ev) => {
+      const [px] = d3.pointer(ev);
+      const i = d3.bisector((d) => d.d).center(data, x.invert(px));
+      const d = data[i]; if (!d) return;
+      bars.attr('opacity', (b) => (b === d ? 1 : 0.4));
+      tip.show([fDia(d.dia), (f === 'desbloqueos' ? 'Desbloqueos' : 'Desembargos') + ': ' + fN(d.v)], (x(d.d) / W) * el.clientWidth, (y(d.v) / H) * el.clientHeight);
+    }).on('pointerleave', () => { tip.hide(); bars.attr('opacity', 1); });
+  }
+
+  // ---------- Gráfico mensual ----------
+  function drawMes(id, f, color) {
+    const el = document.getElementById(id);
+    el.querySelectorAll('svg').forEach((n) => n.remove());
+    const data = d3.rollups(S.diario, (v) => d3.sum(v, (r) => r[f]), (r) => r.dia.slice(0, 7))
+      .map(([mes, v]) => ({ mes, v })).sort((a, b) => a.mes.localeCompare(b.mes));
+    const W = Math.max(el.clientWidth, 260), H = el.clientHeight || 170;
+    const m = { t: 18, b: 22 };
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    const x = d3.scaleBand(data.map((d) => d.mes), [0, W]).padding(0.28);
+    const y = d3.scaleLinear([0, d3.max(data, (d) => d.v) || 1], [H - m.b, m.t]);
+    const g = svg.append('g').selectAll('g').data(data).join('g');
+    g.append('rect').attr('x', (d) => x(d.mes)).attr('width', x.bandwidth())
+      .attr('y', (d) => y(d.v)).attr('height', (d) => Math.max(1, y(0) - y(d.v))).attr('rx', 4).attr('fill', color);
+    g.append('text').attr('x', (d) => x(d.mes) + x.bandwidth() / 2).attr('y', (d) => y(d.v) - 5)
+      .attr('text-anchor', 'middle').style('font-variant-numeric', 'tabular-nums').style('fill', css('--ink'))
+      .style('font-size', W < 420 ? '10px' : '11.5px')
+      .text((d) => d.v >= 10000 ? new Intl.NumberFormat('es-CO', { maximumFractionDigits: 1 }).format(d.v / 1000) + ' mil' : fN(d.v));
+    const xa = svg.append('g').attr('transform', `translate(0,${H - m.b})`)
+      .call(d3.axisBottom(x).tickFormat((s) => MES[+s.slice(5, 7) - 1]).tickSize(0).tickPadding(7));
+    axisStyle(xa);
+  }
+
+  // ---------- Causales ----------
+  function drawCausal() {
+    const el = document.getElementById('ch-causal');
+    el.querySelectorAll('svg').forEach((n) => n.remove());
+    const tipo = S.tipoCausal, color = tipo === 'Desbloqueo' ? css('--c1') : css('--c2');
+    const data = d3.rollups(S.causal.filter((r) => r.tipo === tipo), (v) => d3.sum(v, (r) => r.n), (r) => r.causal)
+      .map(([causal, n]) => ({ causal, n })).sort((a, b) => b.n - a.n);
+    const tot = d3.sum(data, (d) => d.n) || 1;
+    const W = Math.max(el.clientWidth, 260), rowH = 46, H = data.length * rowH + 4;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+    const x = d3.scaleLinear([0, d3.max(data, (d) => d.n) || 1], [0, W]);
+    const g = svg.selectAll('g').data(data).join('g').attr('transform', (d, i) => `translate(0,${i * rowH})`);
+    g.append('text').attr('y', 14).style('fill', css('--ink')).style('font-size', '13px').text((d) => d.causal);
+    g.append('text').attr('x', W).attr('y', 14).attr('text-anchor', 'end').style('font-variant-numeric', 'tabular-nums')
+      .style('font-size', '12.5px').text((d) => fN(d.n) + ' · ' + pf.format(d.n / tot));
+    g.append('rect').attr('y', 22).attr('width', W).attr('height', 10).attr('rx', 5).attr('fill', css('--grid'));
+    g.append('rect').attr('y', 22).attr('width', (d) => Math.max(3, x(d.n))).attr('height', 10).attr('rx', 5).attr('fill', color);
+  }
+
+  // ---------- Tabla diaria ----------
+  function renderDia() {
+    const tb = document.getElementById('tb-dia'); tb.textContent = '';
+    const q = document.getElementById('buscar').value.trim().toLowerCase();
+    const rows = S.diario.filter((r) => !q || r.dia.includes(q) || fDia(r.dia).toLowerCase().includes(q));
+    const k = S.sortK, dir = S.sortDir;
+    rows.sort((a, b) => (k === 'dia' ? a.dia.localeCompare(b.dia) : a[k] - b[k]) * dir);
+    document.querySelectorAll('#detalle th').forEach((th) => {
+      th.setAttribute('aria-sort', th.dataset.k === k ? (dir > 0 ? 'ascending' : 'descending') : 'none');
+    });
+    const frag = document.createDocumentFragment();
+    rows.forEach((r) => {
+      const tr = document.createElement('tr');
+      const a = document.createElement('td'); a.textContent = fDia(r.dia);
+      const b = document.createElement('td'); b.textContent = fN(r.desbloqueos);
+      const c = document.createElement('td'); c.textContent = fN(r.desembargos);
+      tr.append(a, b, c); frag.appendChild(tr);
+    });
+    tb.appendChild(frag);
+  }
+
+  // ---------- Controles ----------
+  function seg(id, fn) {
+    const g = document.getElementById(id);
+    g.querySelectorAll('button').forEach((b) => b.addEventListener('click', () => {
+      g.querySelectorAll('button').forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+      fn(b.dataset.v);
+    }));
+  }
+  seg('seg-serie', (v) => { S.serie = v; drawDiario(); });
+  seg('seg-rango', (v) => { S.rango = +v; drawDiario(); });
+  seg('seg-causal', (v) => { S.tipoCausal = v; drawCausal(); });
+  document.getElementById('buscar').addEventListener('input', renderDia);
+  document.querySelectorAll('#detalle th button').forEach((b) => b.addEventListener('click', () => {
+    const k = b.parentElement.dataset.k;
+    S.sortDir = S.sortK === k ? -S.sortDir : -1; S.sortK = k; renderDia();
+  }));
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(redraw, 150); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', redraw);
+})();
+</script>
+</body>
+</html>
