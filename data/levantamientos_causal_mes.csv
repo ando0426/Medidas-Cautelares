@@ -16,8 +16,8 @@ mes,tipo,causal,n
 2026-09,Desbloqueo,Cierre Administrativo,139
 2026-09,Desbloqueo,Prescripción,1
 2026-09,Desbloqueo,Ajustes,1
-2026-10,Desbloqueo,Pago,1310
-2026-10,Desbloqueo,Cierre Administrativo,197
+2026-10,Desbloqueo,Pago,1377
+2026-10,Desbloqueo,Cierre Administrativo,207
 2026-10,Desbloqueo,Ajustes,2
 2026-10,Desbloqueo,Convenio,1
 2026-01,Desembargo,Pago,1
@@ -37,5 +37,5 @@ mes,tipo,causal,n
 2026-08,Desembargo,Pago,63
 2026-09,Desembargo,Pago,16
 2026-09,Desembargo,Cierre Administrativo,2
-2026-10,Desembargo,Pago,10
+2026-10,Desembargo,Pago,12
 2026-10,Desembargo,Cierre Administrativo,1
