@@ -1,7 +1,7 @@
 cod,estado,medidas,valor
-B,Bloqueo financiero,325013,873114296818
-G,Desbloqueo financiero,49670,139784106400
-E,Embargo,8412,51844532000
-D,Desembargo,662,4267462000
+B,Bloqueo financiero,324952,872945534818
+G,Desbloqueo financiero,49731,139952868400
+E,Embargo,8409,51830208000
+D,Desembargo,665,4281786000
 F,Finalización,148,300656800
 I,Investigación,10,5820000
